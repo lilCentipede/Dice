@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Dice Simulation</title>
+		<meta charset="utf-8">
+		
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<script src="three.min.js"></script>
+		<script src="stats.min.js"></script>
+		<script src="physi.js"></script>
+		<script src="WebGL.js"></script>
+		<script src="vax.js"></script>
+	</head>
+	
+	<body>
+		<script>
+			vaxInit();
+			function getRandomInt(max) {
+  				return Math.floor(Math.random() * max);
+			}
+			function getRndInteger(min, max) {
+ 				return Math.floor(Math.random() * (max - min + 1) ) + min;
+			}
+			function negOrpos(){
+				var r = Math.random();
+				if(0 <= r && 0.5 <= r)
+					r = -1;
+				else r = 1;
+				return r;
+			}
+
+			//camera setup
+			camera.position.set(0,90,80);
+			camera.lookAt(0,0,0);
+
+			light.position.set(0,100,20);
+
+			var board = new Physijs.BoxMesh(new THREE.BoxGeometry(120,1,60),Physijs.createMaterial(new THREE.MeshPhongMaterial({color:  0x8B4513})),0);
+			
+			var leftPlate = new Physijs.BoxMesh(new THREE.BoxGeometry(1,8,61),Physijs.createMaterial(new THREE.MeshPhongMaterial({color: 0x8B4513})));
+			leftPlate.position.x -= 60;
+			leftPlate.position.y = 4;
+			board.add(leftPlate);
+			
+			var rightPlate = new Physijs.BoxMesh(new THREE.BoxGeometry(1,8,61),Physijs.createMaterial(new THREE.MeshPhongMaterial({color: 0x8B4513})));
+			rightPlate.position.x += 60;
+			rightPlate.position.y = 4;
+			board.add(rightPlate);
+			
+			var frontPlate = new Physijs.BoxMesh(new THREE.BoxGeometry(121,8,1),Physijs.createMaterial(new THREE.MeshPhongMaterial({color: 0x8B4513})));
+			frontPlate.position.z += 30;
+			frontPlate.position.y = 4;
+			board.add(frontPlate);
+			
+			var backPlate = new Physijs.BoxMesh(new THREE.BoxGeometry(121,8,1),Physijs.createMaterial(new THREE.MeshPhongMaterial({color: 0x8B4513})));
+			backPlate.position.z -= 30;
+			backPlate.position.y = 4;
+			board.add(backPlate);
+			
+			scene.add(board);
+
+			var die = new Physijs.BoxMesh(new THREE.BoxGeometry(10,10,10),Physijs.createMaterial(new THREE.MeshLambertMaterial({color: 0xf5f5f7})),1);
+			var dots = [];
+			function createDot(){
+				var dot = new THREE.Mesh(new THREE.CircleGeometry(1,32), Physijs.createMaterial(new THREE.MeshLambertMaterial({color : 'red'})));
+				return dot;
+			}
+			/*function setDot(r,x1,y1,z1){
+				var dot = createDot();
+				dot.rotation.set(r);
+				dot.position.x += x1;
+				dot.position.y += y1;
+				dot.position.z += z1;
+				return dot;
+			}*/
+				
+			//one
+				dots[0] = createDot();
+				dots[0].rotation.x -= Math.PI/2;
+				dots[0].position.y += 5.1;
+				die.add(dots[0]);		
+				
+			//two
+				dots[1] = createDot();
+				dots[1].position.set(-3,3,5.1);
+				
+				dots[2] = createDot();
+				dots[2].position.set(3,-3,5.1);
+				die.add(dots[1],dots[2]);
+			
+			//three 
+				dots[3] = createDot();
+				dots[3].rotation.y += Math.PI/2;
+				dots[3].position.set(5.1,3,-3);
+				
+				dots[4] = createDot();
+				dots[4].rotation.y += Math.PI/2;
+				dots[4].position.x += 5.1;
+				
+				dots[5] = createDot();
+				dots[5].rotation.y +=Math.PI/2;
+				dots[5].position.set(5.1,-3,3);
+				die.add(dots[3],dots[4],dots[5]);
+				
+			//four
+				dots[6] = createDot();
+				dots[6].rotation.y -=Math.PI/2;
+				dots[6].position.set(-5.1,3,-3);
+				
+				dots[7] = createDot();
+				dots[7].rotation.y -=Math.PI/2;
+				dots[7].position.set(-5.1,3,3);
+				
+				dots[8] = createDot();
+				dots[8].rotation.y -=Math.PI/2;
+				dots[8].position.set(-5.1,-3,3);
+				
+				dots[9] = createDot();
+				dots[9].rotation.y -=Math.PI/2;
+				dots[9].position.set(-5.1,-3,-3);
+				
+				die.add(dots[6],dots[7],dots[8],dots[9]);
+				
+			//five
+				dots[10] = createDot();
+				dots[10].rotation.x -= Math.PI;
+				dots[10].position.z -= 5.1;
+				
+				dots[11] = createDot();
+				dots[11].rotation.x -= Math.PI;
+				dots[11].position.set(3,-3,-5.1);
+				
+				dots[12] = createDot();
+				dots[12].rotation.x -= Math.PI;
+				dots[12].position.set(-3,-3,-5.1);
+				
+				dots[13] = createDot();
+				dots[13].rotation.x -= Math.PI;
+				dots[13].position.set(3,3,-5.1);
+				
+				dots[14] = createDot();
+				dots[14].rotation.x -= Math.PI;
+				dots[14].position.set(-3,3,-5.1);
+				die.add(dots[10],dots[11],dots[12],dots[13],dots[14]);
+				 
+			//six
+				dots[15] = createDot();
+				dots[15].rotation.x += Math.PI/2;
+				dots[15].position.set(3,-5.1,0);
+				
+				dots[16] = createDot();
+				dots[16].rotation.x += Math.PI/2;
+				dots[16].position.set(-3,-5.1,0);
+				
+				dots[17] = createDot();
+				dots[17].rotation.x += Math.PI/2;
+				dots[17].position.set(3,-5.1,-3);
+				
+				dots[18] = createDot();
+				dots[18].rotation.x += Math.PI/2;
+				dots[18].position.set(3,-5.1,3);
+				
+				dots[19] = createDot();
+				dots[19].rotation.x += Math.PI/2;
+				dots[19].position.set(-3,-5.1,3);
+				
+				dots[20] = createDot();
+				dots[20].rotation.x += Math.PI/2;
+				dots[20].position.set(-3,-5.1,-3);
+				die.add(dots[15],dots[16],dots[17],dots[18],dots[19],dots[20]);
+				
+			die.scale.set(0.7,0.7,0.7);
+
+			die2 = die.clone();
+
+			var randomX = getRndInteger(-40,40);
+			die.position.set(randomX,50,40);
+			die2.position.set(randomX + 10,50,40);
+
+			die.rotation.set(Math.PI*Math.random(),Math.PI*Math.random(),Math.PI*Math.random() );
+			die2.rotation.set(Math.PI*Math.random(),Math.PI*Math.random(),Math.PI*Math.random() );
+			die2.mass = 1;
+			scene.add(die);
+			scene.add(die2);
+
+			var dieOffset = 0;
+			while(dieOffset < 0.1){
+				dieOffset = Math.random();
+			}
+			var forceX = getRndInteger(-100 + Math.abs(randomX),100 - Math.abs(randomX));
+			var forceZ = getRndInteger(-450,-200);
+			die.applyForce( new THREE.Vector3   (forceX,
+												0,
+												forceZ
+												),
+												new THREE.Vector3(negOrpos()*dieOffset,negOrpos()*dieOffset,negOrpos()*dieOffset));
+			die2.applyForce( new THREE.Vector3  (forceX,
+												0,
+												forceZ
+												),
+												new THREE.Vector3(negOrpos()*dieOffset,negOrpos()*dieOffset,negOrpos()*dieOffset));
+			
+			function animate()
+			{
+				scene.simulate(1/20);
+				scene.rotation.y =t/6;
+				
+			}
+		</script>
+	</body>
+</html>
